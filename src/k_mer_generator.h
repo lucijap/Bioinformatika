@@ -13,6 +13,6 @@ using namespace std;
  * @param sequence: sequence from which k-mers are generated
  * @param w: window size
  * @param k: k-mer size
- * @return: map where each pair contains a k-mer string and the index of the k-mer in the original sequence
+ * @return: map where each pair contains a k-mer string and the list of indices of the k-mer in the original sequence
  */
 map<string,list<int>>generate_k_mers(string* sequence,int w,int k);
