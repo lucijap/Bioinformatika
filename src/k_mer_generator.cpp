@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-map<string,list<int>> generate_k_mers(string* sequence,int w, int k){
+map<string,list<int>> GenerateKmers(string* sequence,int w, int k){
 
     map<string,list<int>> k_mers;
     list<string> current_window;
