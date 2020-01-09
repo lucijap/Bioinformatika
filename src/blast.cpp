@@ -46,7 +46,11 @@ list<string> Blast(map<string,list<int>> reference_kmers,string sequence,int k){
         for(auto const&k_mer1:all_kmers){
             int sum = 0;
             for(unsigned int j=0;j<k;j++){
-                sum+=blosum62[make_pair(k_mer.at(j),k_mer1.at(j))];
+                if (k_mer.at(j) == k_mer1.at(j)) {
+                    sum += 1;
+                } else {
+                    sum -= 2;
+                }
             }
             if (sum>=thresh){
                 kmers_to_compare.push_back(k_mer1);

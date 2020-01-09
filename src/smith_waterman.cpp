@@ -8,9 +8,9 @@ using namespace std;
 
 int SimilarityScore(char a, char b) {
   if (a == b) {
-      return 3;
+      return 2;
   } else {
-      return -3;
+      return -1;
   }
 }
 
