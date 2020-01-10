@@ -1,6 +1,7 @@
 #include "minimap.h"
 #include <cmath>
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -57,6 +58,7 @@ string SequenceComplement(string* s) {
                 throw invalid_argument("Non nucleotide letter encountered");
         }
     }
+    reverse(complement.begin(), complement.end());
     return complement;
 }
 
