@@ -6,57 +6,53 @@
 
 using namespace std;
 
-int SimilarityScore(char a, char b) {
+short SimilarityScore(char a, char b) {
   if (a == b) {
-      return 3;
+      return (short) 3;
   } else {
-      return -5;
+      return (short) -5;
   }
 }
 
 pair<string, string> SmithWaterman(string sequence_A, string sequence_B) {
     int dim_A = sequence_A.length();
     int dim_B = sequence_B.length();
-    const int penalty = 4;
+    const short penalty = 4;
 
-    map<pair<int, int>, pair<int, int>> traceback;
-
-    int scoring_matrix[dim_A + 1][dim_B + 1];
-
-    for (int i = 0; i < dim_A + 1; i++) {
-        scoring_matrix[i][0] = 0;
-    }
-
+    map<pair<short, short>, pair<short, short>> traceback;
+    short last_line[dim_B + 1];
+    short current_line[dim_B + 1];
     for (int i = 0; i < dim_B + 1; i++) {
-        scoring_matrix[0][i] = 0;
+        last_line[i] = 0;
     }
 
-    int match = 0, insertion = 0, deletion = 0, maximum_value;
+    int match = 0, insertion = 0, deletion = 0, maximum_value = 0;
+    int max_so_far = 0;
+    pair<int, int> max_pair;
     for (int i = 1; i < dim_A + 1; i++) {
+        current_line[0] = 0;
         for (int j = 1; j < dim_B + 1; j++) {
-            match = scoring_matrix[i - 1][j - 1] + SimilarityScore(sequence_A[i - 1], sequence_B[j - 1]);
-            insertion = scoring_matrix[i][j - 1] - penalty;
-            deletion = scoring_matrix[i - 1][j] - penalty;
+            match = last_line[j - 1] + SimilarityScore(sequence_A[i - 1], sequence_B[j - 1]);
+            insertion = current_line[j - 1] - penalty;
+            deletion = last_line[j] - penalty;
             maximum_value = max({0, match, insertion, deletion});
-            scoring_matrix[i][j] = maximum_value;
-            if (maximum_value == match) {
-                traceback.insert({pair<int, int> (i, j), pair<int, int> (i - 1, j - 1)});
-            } else if (maximum_value == insertion) {
-                traceback.insert({pair<int, int> (i, j), pair<int, int> (i, j - 1)});
-            } else if (maximum_value == deletion) {
-                traceback.insert({pair<int, int> (i, j), pair<int, int> (i - 1, j)});
+            current_line[j] = (short) maximum_value;
+            if (maximum_value != 0) {
+                if (maximum_value == match) {
+                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i - 1, j - 1)});
+                } else if (maximum_value == insertion) {
+                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i, j - 1)});
+                } else if (maximum_value == deletion) {
+                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i - 1, j)});
+                }
+                if (maximum_value > max_so_far) {
+                    max_so_far = maximum_value;
+                    max_pair = pair<int, int> (i, j);
+                }
             }
         }
-    }
-
-    pair<int, int> max_pair(0, 0);
-    int max_value = 0;
-    for (int i = 1; i < dim_A + 1; i++) {
-        for (int j = 1; j < dim_B + 1; j++) {
-            if (scoring_matrix[i][j] > max_value) {
-                max_value = scoring_matrix[i][j];
-                max_pair = pair<int, int> (i, j);
-            }
+        for (int k = 0; k < dim_B + 1; k++) {
+            last_line[k] = current_line[k];
         }
     }
 
