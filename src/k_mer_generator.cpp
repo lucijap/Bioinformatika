@@ -19,11 +19,11 @@ map<string,list<int>> GenerateKmers(string* sequence,int w, int k){
     }
 
     // slide window along sequence
-    for(int i=w;i<sequence->size()-k;i++){
+    for(int i=w;i<sequence->size() - 1;i++){
         if(i!=w){
             current_window.pop_front();
+            current_window.push_back(sequence->substr(i - 1,k));
         }
-        current_window.push_back(sequence->substr(i,k));
 
         // find minimal k-mer in current window and add it to k_mers
         min_kmer_iter = min_element(current_window.begin(),current_window.end());
