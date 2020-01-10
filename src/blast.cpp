@@ -33,12 +33,10 @@ list<string> getAllKLength(char set[], int k,int n){
     return result;
 }
 
-list<string> Blast(map<string,list<int>> reference_kmers,string sequence,int k){
-
-    int thresh = 5;
+list<string> Blast(map<string,list<int>>* reference_kmers, map<string, list<int>>* seq_kmers,int k){
+    /*
+    int thresh = 7;
     char bases [4]= {'A','C','G','T'};
-    list<string> all_kmers = getAllKLength(bases,k,4);
-    list<string> kmers_to_compare;
 
     for(unsigned int i=0;i<sequence.size()-k;i++){
         string k_mer=sequence.substr(i,(unsigned int)k);
@@ -48,8 +46,6 @@ list<string> Blast(map<string,list<int>> reference_kmers,string sequence,int k){
             for(unsigned int j=0;j<k;j++){
                 if (k_mer.at(j) == k_mer1.at(j)) {
                     sum += 1;
-                } else {
-                    sum -= 2;
                 }
             }
             if (sum>=thresh){
@@ -57,23 +53,23 @@ list<string> Blast(map<string,list<int>> reference_kmers,string sequence,int k){
             }
         }
     }
+     */
 
     list<string> hit_list;
 
     // generate list of keys in reference_kmers
     vector<string> keys;
-    keys.reserve(reference_kmers.size());
-    for(auto const&it:reference_kmers){
+    keys.reserve(reference_kmers->size());
+    for(auto const&it:*reference_kmers){
         keys.push_back(it.first);
     }
 
     // generate list of hits
-    for(auto const&k_mer:kmers_to_compare){
-        if(count(keys.begin(),keys.end(),k_mer)>0){
-            hit_list.push_back(k_mer);
+    for(auto const&k_mer:*seq_kmers){
+        if(count(keys.begin(),keys.end(),k_mer.first)>0){
+            hit_list.push_back(k_mer.first);
         }
     }
-
     return hit_list;
 }
 
