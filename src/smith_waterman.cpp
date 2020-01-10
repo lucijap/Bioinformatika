@@ -8,16 +8,16 @@ using namespace std;
 
 int SimilarityScore(char a, char b) {
   if (a == b) {
-      return 2;
+      return 3;
   } else {
-      return -1;
+      return -5;
   }
 }
 
 pair<string, string> SmithWaterman(string sequence_A, string sequence_B) {
     int dim_A = sequence_A.length();
     int dim_B = sequence_B.length();
-    const int penalty = 2;
+    const int penalty = 4;
 
     map<pair<int, int>, pair<int, int>> traceback;
 
