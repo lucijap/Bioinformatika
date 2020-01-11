@@ -59,12 +59,12 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
 
     string first;
     string second;
-    list<string> list_of_mutations;
+    list<int> list_of_mutations;
     while (traceback.count(max_pair)) {
         pair<int, int> next_pair = traceback.at(max_pair);
         if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second - 1) {
             if (sequence_A[next_pair.first] != sequence_B[next_pair.second]){
-                list_of_mutations.push_back("X," + to_string(next_pair.first + region_start)+","+sequence_B[next_pair.second]);
+                list_of_mutations.push_back(next_pair.first + region_start);
             }
             first += sequence_A[next_pair.first];
             second += sequence_B[next_pair.second];
@@ -78,9 +78,7 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
         max_pair = next_pair;
     }
 
-    for (auto el2 : list_of_mutations) {
-        cout << el2 << endl;
-    }
+
 
     reverse(first.begin(), first.end());
     reverse(second.begin(), second.end());

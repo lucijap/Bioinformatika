@@ -10,9 +10,13 @@ using namespace std;
 
 pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_kmers,int reference_size,int sequence_size,int k){
 
+
     int region_length = sequence_size;
     vector<int> hit_region_count;
     hit_region_count.reserve((unsigned int)(reference_size));
+    for (int i = 0; i < reference_size; i++){
+        hit_region_count[i] = 0;
+    }
 
     // count number of hits per region
     for(auto const&hit:*hit_list){
@@ -25,12 +29,8 @@ pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_km
             if (idx<region_length) {
                 start = 0;
                 end = idx + 1;
-            } else if(idx==sequence_size-1) {
-                start = idx-region_length+1;
-                end=idx;
-
             } else{
-                start=idx-region_length+1;
+                start=idx-region_length+k;
                 end = idx+1;
             }
             for(int i=start;i<end;i++){
@@ -39,13 +39,20 @@ pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_km
         }
     }
 
-    // choose region with the most number of hits
-
-    for (auto el2 : hit_region_count) {
-        cout << el2 << endl;
+    for (int i = 0; i < reference_size; i++) {
+        cout << "hits: " << hit_region_count[i] << endl;
     }
 
-    int max_hits_region = max_element(hit_region_count.begin(),hit_region_count.end())-hit_region_count.begin();
+    // choose region with the most number of hits
+    int max_hits = 0;
+    int max_hits_region = 0;
+    for (int i = 0; i < reference_size; i++) {
+        if (hit_region_count[i] > max_hits) {
+            max_hits = hit_region_count[i];
+            max_hits_region = i;
+        }
+    }
 
-    return make_pair(max_hits_region*region_length,(max_hits_region+1)*region_length);
+
+    return make_pair(max_hits_region,region_length);
 }
