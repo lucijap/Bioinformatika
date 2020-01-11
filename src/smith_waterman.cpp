@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <list>
 #include <algorithm>
 
 using namespace std;
@@ -14,7 +15,7 @@ short SimilarityScore(char a, char b) {
   }
 }
 
-pair<string, string> SmithWaterman(string sequence_A, string sequence_B) {
+pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int region_start) {
     int dim_A = sequence_A.length();
     int dim_B = sequence_B.length();
     const short penalty = 4;
@@ -58,9 +59,13 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B) {
 
     string first;
     string second;
+    list<string> list_of_mutations;
     while (traceback.count(max_pair)) {
         pair<int, int> next_pair = traceback.at(max_pair);
         if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second - 1) {
+            if (sequence_A[next_pair.first] != sequence_B[next_pair.second]){
+                list_of_mutations.push_back("X," + to_string(next_pair.first + region_start)+","+sequence_B[next_pair.second]);
+            }
             first += sequence_A[next_pair.first];
             second += sequence_B[next_pair.second];
         } else if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second) {
@@ -71,6 +76,10 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B) {
             second += sequence_B[next_pair.second];
         }
         max_pair = next_pair;
+    }
+
+    for (auto el2 : list_of_mutations) {
+        cout << el2 << endl;
     }
 
     reverse(first.begin(), first.end());

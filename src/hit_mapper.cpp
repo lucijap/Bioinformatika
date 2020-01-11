@@ -10,7 +10,7 @@ using namespace std;
 
 pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_kmers,int reference_size,int sequence_size,int k){
 
-    int region_length = sequence_size+k;
+    int region_length = sequence_size;
     vector<int> hit_region_count;
     hit_region_count.reserve((unsigned int)(reference_size));
 
@@ -22,9 +22,13 @@ pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_km
         for(auto const&idx:indices){
             int start;
             int end;
-            if (idx<region_length){
-                start=0;
-                end = idx+1;
+            if (idx<region_length) {
+                start = 0;
+                end = idx + 1;
+            } else if(idx==sequence_size-1) {
+                start = idx-region_length+1;
+                end=idx;
+
             } else{
                 start=idx-region_length+1;
                 end = idx+1;
@@ -36,6 +40,10 @@ pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_km
     }
 
     // choose region with the most number of hits
+
+    for (auto el2 : hit_region_count) {
+        cout << el2 << endl;
+    }
 
     int max_hits_region = max_element(hit_region_count.begin(),hit_region_count.end())-hit_region_count.begin();
 

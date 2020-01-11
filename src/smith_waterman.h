@@ -4,6 +4,6 @@ using namespace std;
 #define SRC_SMITH_WATERMAN_H
 
 
-pair<string, string> SmithWaterman(string sequence_A, string sequence_B);
+pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int region_start);
 
 #endif //SRC_SMITH_WATERMAN_H
