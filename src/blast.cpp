@@ -33,7 +33,7 @@ list<string> getAllKLength(char set[], int k,int n){
     return result;
 }
 
-list<string> Blast(map<string,list<int>>* reference_kmers, map<string, list<int>>* seq_kmers,int k){
+vector<string> Blast(vector<string>* reference_kmers, map<string, list<int>>* seq_kmers,int k){
     /*
     int thresh = 7;
     char bases [4]= {'A','C','G','T'};
@@ -55,21 +55,17 @@ list<string> Blast(map<string,list<int>>* reference_kmers, map<string, list<int>
     }
      */
 
-    list<string> hit_list;
 
     // generate list of keys in reference_kmers
-    vector<string> keys;
-    keys.reserve(reference_kmers->size());
-    for(auto const&it:*reference_kmers){
-        keys.push_back(it.first);
-    }
 
     // generate list of hits
+    vector<string> seq_keys;
     for(auto const&k_mer:*seq_kmers){
-        if(count(keys.begin(),keys.end(),k_mer.first)>0){
-            hit_list.push_back(k_mer.first);
-        }
+        seq_keys.push_back(k_mer.first);
     }
+
+    vector<string> hit_list;
+    set_intersection(reference_kmers->begin(), reference_kmers->end(), seq_keys.begin(), seq_keys.end(), inserter(hit_list,  hit_list.begin()));
     return hit_list;
 }
 

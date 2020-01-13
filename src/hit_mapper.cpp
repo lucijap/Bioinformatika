@@ -8,7 +8,7 @@
 
 using namespace std;
 
-pair<int,int> MapHits(list<string>* hit_list,map<string,list<int>>* reference_kmers,int reference_size,int sequence_size,int k){
+pair<int,int> MapHits(vector<string>* hit_list,map<string,list<int>>* reference_kmers,int reference_size,int sequence_size,int k){
     int region_length = sequence_size;
     vector<int> hit_region_count;
     hit_region_count.reserve((unsigned int)(reference_size - region_length + 1));

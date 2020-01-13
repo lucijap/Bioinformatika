@@ -6,6 +6,7 @@
 #include "k_mer_generator.h"
 #include "blast.h"
 #include "hit_mapper.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -31,7 +32,15 @@ int main() {
     //string sequence = *it;
     map<string, list<int>> seq_kmers = GenerateKmers(&sequence, w, k);
 
-    list<string> hit_list = Blast(&kmers, &seq_kmers, k);
+    vector<string> keys;
+    keys.reserve(kmers.size());
+    for(auto const&itt:kmers){
+        keys.push_back(itt.first);
+    }
+
+    sort(keys.begin(), keys.end());
+
+    vector<string> hit_list = Blast(&keys, &seq_kmers, k);
     cout << "done with hit list" << endl;
     seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
     pair<int,int> region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
@@ -42,8 +51,6 @@ int main() {
     //cout << hit_region << endl;
     pair<string, string> result = SmithWaterman(hit_region, sequence, region.first);
     cout << "done with smith" << endl;
-    cout << result.first << endl;
-    cout << result.second << endl;
 
     /*
     for(auto elem : words) {

@@ -4,7 +4,7 @@
 #ifndef MUTATIONDETECTION_K_MER_INDEX_ALIGNMENT_H
 #define MUTATIONDETECTION_K_MER_INDEX_ALIGNMENT_H
 
-#endif //MUTATIONDETECTION_K_MER_INDEX_ALIGNMENT_H
+
 using namespace std;
 
 /**
@@ -15,4 +15,5 @@ using namespace std;
  * @param k: k-mer size
  * @return: map where each pair contains a k-mer string and the list of indices of the k-mer in the original sequence
  */
-map<string,list<int>>GenerateKmers(string* sequence,int w,int k);
+map<string,list<int>> GenerateKmers(string* sequence,int w,int k);
+#endif //MUTATIONDETECTION_K_MER_INDEX_ALIGNMENT_H
