@@ -16,9 +16,7 @@ int main() {
     int k = 11;
     string reference = ReadReferentGenome("../train-data/ecoli.fasta");
     list<string> sequences = ReadMutatedGenomeSequences("../train-data/ecoli_simulated_reads.fasta");
-    auto it = sequences.begin();
-    advance(it,sequences.size()-1);
-    string sequence = *it;
+
 
     //set<tuple<int, int, int>> result = MinimizerSketch(&reference, w, k);
 
@@ -30,7 +28,7 @@ int main() {
     //auto it = sequences.begin();
     //advance(it,1);
     //string sequence = *it;
-    map<string, list<int>> seq_kmers = GenerateKmers(&sequence, w, k);
+
 
     vector<string> keys;
     keys.reserve(kmers.size());
@@ -40,17 +38,29 @@ int main() {
 
     sort(keys.begin(), keys.end());
 
-    vector<string> hit_list = Blast(&keys, &seq_kmers, k);
-    cout << "done with hit list" << endl;
-    seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
-    pair<int,int> region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
-    cout << "done with map hit" << endl;
+    list<tuple<char,int,char>> mutation_list;
+    list<tuple<char,int,char>> result;
+    int i = 0;
+    for (auto it :sequences) {
+        string sequence = it;
+        map<string, list<int>> seq_kmers = GenerateKmers(&sequence, w, k);
+        vector<string> hit_list = Blast(&keys, &seq_kmers, k);
+        cout << "done with hit list" << endl;
+        seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
+        pair<int,int> region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
+        cout << "done with map hit" << endl;
 
-    hit_list.clear();
-    string hit_region = reference.substr(region.first, region.second);
-    //cout << hit_region << endl;
-    pair<string, string> result = SmithWaterman(hit_region, sequence, region.first);
-    cout << "done with smith" << endl;
+        hit_list.clear();
+        string hit_region = reference.substr(region.first, region.second);
+        result = SmithWaterman(hit_region, sequence, region.first);
+        cout << "done with smith" << endl;
+        i++;
+        if (i%100==0){
+            cout<<"--------------------------"<<i<<"---------------------"<<endl;
+        }
+    }
+
+
 
     /*
     for(auto elem : words) {
