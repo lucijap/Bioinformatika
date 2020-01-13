@@ -4,6 +4,7 @@
 #include <map>
 #include <list>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
 
@@ -14,6 +15,12 @@ short SimilarityScore(char a, char b) {
       return (short) -5;
   }
 }
+bool sortbysec(const tuple<int, int, int>& a,
+               const tuple<int, int, int>& b)
+{
+    return (get<1>(a) < get<1>(b));
+}
+
 
 pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int region_start) {
     int dim_A = sequence_A.length();
@@ -56,37 +63,57 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
             last_line[k] = current_line[k];
         }
     }
-
+    ofstream outfile ("ecoli_mutated_test.csv");
     string first;
     string second;
-    list<int> list_of_mutations;
+    list<tuple<char,int,char>> list_of_mutations;
+    tuple<char,int,char> mutation_tuple;
+    int sum;
+    char mutation_char;
+    char char_of_second;
     while (traceback.count(max_pair)) {
         pair<int, int> next_pair = traceback.at(max_pair);
         if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second - 1) {
             if (sequence_A[next_pair.first] != sequence_B[next_pair.second]){
-                list_of_mutations.push_back(next_pair.first + region_start);
-                cout << next_pair.first + region_start << endl;
+                mutation_char ='X';
+                sum=next_pair.first+region_start;
+                char_of_second=sequence_B[next_pair.second];
+                mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
+                list_of_mutations.push_back(mutation_tuple);
+                //cout << next_pair.first + region_start << endl; //mutacija mijenjanje
             }
-            first += sequence_A[next_pair.first];
-            second += sequence_B[next_pair.second];
+            //first += sequence_A[next_pair.first];
+            //second += sequence_B[next_pair.second];
         } else if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second) {
-            first += sequence_A[next_pair.first];
-            second += "-";
-            cout << next_pair.first + region_start << endl;
+            //first += sequence_A[next_pair.first];
+            //second += "-";
+            //cout << next_pair.first + region_start << endl;// umetanje
+            mutation_char ='D';
+            sum=next_pair.first+region_start;
+            char_of_second=sequence_A[next_pair.first];
+            mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
+            list_of_mutations.push_back(mutation_tuple);
         } else if (next_pair.first == max_pair.first and next_pair.second == max_pair.second - 1) {
-            first += "-";
-            second += sequence_B[next_pair.second];
-            cout << next_pair.first + region_start << endl;
+            //first += "-";
+            //second += sequence_B[next_pair.second];
+            mutation_char ='I';
+            sum=next_pair.first+region_start;
+            char_of_second=sequence_B[next_pair.second];
+            mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
+            list_of_mutations.push_back(mutation_tuple);
+            //cout << next_pair.first + region_start << endl;//brisanje
         }
         max_pair = next_pair;
     }
 
-
-
-
+    list_of_mutations.reverse();
+//    sort(list_of_mutations.begin(), list_of_mutations.end(), sortbysec);
+    for(auto const&mutation:list_of_mutations){
+        outfile << get<0>(mutation) << "," << get<1>(mutation) << "," <<get<2>(mutation)<<endl;
+    }
     reverse(first.begin(), first.end());
     reverse(second.begin(), second.end());
-
+    outfile.close();
     /*
     cout << first << endl;
     cout << second << endl;
