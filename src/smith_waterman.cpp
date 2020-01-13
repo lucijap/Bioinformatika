@@ -65,18 +65,22 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
         if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second - 1) {
             if (sequence_A[next_pair.first] != sequence_B[next_pair.second]){
                 list_of_mutations.push_back(next_pair.first + region_start);
+                cout << next_pair.first + region_start << endl;
             }
             first += sequence_A[next_pair.first];
             second += sequence_B[next_pair.second];
         } else if (next_pair.first == max_pair.first - 1 and next_pair.second == max_pair.second) {
             first += sequence_A[next_pair.first];
             second += "-";
+            cout << next_pair.first + region_start << endl;
         } else if (next_pair.first == max_pair.first and next_pair.second == max_pair.second - 1) {
             first += "-";
             second += sequence_B[next_pair.second];
+            cout << next_pair.first + region_start << endl;
         }
         max_pair = next_pair;
     }
+
 
 
 

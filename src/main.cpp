@@ -10,40 +10,38 @@
 using namespace std;
 
 int main() {
-    int w = 1;
-    int k = 3;
-    string reference = ReadReferentGenome("../train-data/nas");
-    //cout << "done with read" << endl;
+
+    int w = 5;
+    int k = 11;
+    string reference = ReadReferentGenome("../train-data/ecoli.fasta");
+    list<string> sequences = ReadMutatedGenomeSequences("../train-data/ecoli_simulated_reads.fasta");
+    auto it = sequences.begin();
+    advance(it,sequences.size()-1);
+    string sequence = *it;
+
+    //set<tuple<int, int, int>> result = MinimizerSketch(&reference, w, k);
+
+    cout << "done with read" << endl;
     map<string, list<int>> kmers = GenerateKmers(&reference, w, k);
 
-    //cout << "done with gen kmers" << endl;
-    list<string> sequences = ReadMutatedGenomeSequences("../train-data/nas_mutated");
+    cout << "done with gen kmers" << endl;
 
     //auto it = sequences.begin();
     //advance(it,1);
     //string sequence = *it;
-    string sequence = sequences.front();
     map<string, list<int>> seq_kmers = GenerateKmers(&sequence, w, k);
-    /*
-    for (auto el2 : seq_kmers) {
-        cout << el2.first << endl;
-        for (auto el3 : el2.second) {
-            cout << el3 << "-" << endl;
-        }
-    }
-    */
 
     list<string> hit_list = Blast(&kmers, &seq_kmers, k);
-    //cout << "done with blast" << endl;
+    cout << "done with hit list" << endl;
     seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
     pair<int,int> region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
-    //cout << "done with map hit" << endl;
+    cout << "done with map hit" << endl;
 
     hit_list.clear();
     string hit_region = reference.substr(region.first, region.second);
-    cout << hit_region << endl;
+    //cout << hit_region << endl;
     pair<string, string> result = SmithWaterman(hit_region, sequence, region.first);
-    //cout << "done with smith" << endl;
+    cout << "done with smith" << endl;
     cout << result.first << endl;
     cout << result.second << endl;
 

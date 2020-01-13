@@ -38,7 +38,7 @@ unsigned int KmerHash(string s, int k) {
     return InvertibleHash(hash_sum, 2*k);
 }
 
-string SequenceComplement(string* s) {
+string SequenceComplementM(string* s) {
     string complement;
     for (char& c : *s) {
         switch (c) {
@@ -65,7 +65,7 @@ string SequenceComplement(string* s) {
 set<tuple<int, int, int>> MinimizerSketch(string* s, int w, int k) {
     set<tuple<int, int, int>> Mu;
     unsigned int u, v, m;
-    string sc = SequenceComplement(s);
+    string sc = SequenceComplementM(s);
     for (int i = 1; i <= s->length() - w - k + 1; i++) {
         m = 2147483647;
         for (int j = 0; j <= w - 1; j++) {
