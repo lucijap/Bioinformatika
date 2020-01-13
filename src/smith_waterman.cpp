@@ -5,6 +5,7 @@
 #include <list>
 #include <algorithm>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -15,45 +16,39 @@ short SimilarityScore(char a, char b) {
       return (short) -5;
   }
 }
-bool sortbysec(const tuple<int, int, int>& a,
-               const tuple<int, int, int>& b)
-{
-    return (get<1>(a) < get<1>(b));
-}
-
 
 pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int region_start) {
-    int dim_A = sequence_A.length();
-    int dim_B = sequence_B.length();
+    const int dim_A = sequence_A.length();
+    const int dim_B = sequence_B.length();
+    vector<vector<short>> similarity_matrix(dim_A + 1);
+    for (int i = 0; i < dim_A + 1; i++) {
+        similarity_matrix[i].resize(dim_B + 1);
+    }
     const short penalty = 4;
 
-    map<pair<short, short>, pair<short, short>> traceback;
-    short last_line[dim_B + 1];
-    short current_line[dim_B + 1];
-    for (int i = 0; i < dim_B + 1; i++) {
-        last_line[i] = 0;
+    vector<vector<short>> traceback(dim_A + 1);
+    for (int i = 0; i < dim_A + 1; i++) {
+        traceback[i].resize(dim_B + 1);
     }
 
     int match = 0, insertion = 0, deletion = 0, maximum_value = 0;
     int max_so_far = 0;
     pair<int, int> max_pair;
+
     for (int i = 1; i < dim_A + 1; i++) {
-        current_line[0] = 0;
         for (int j = 1; j < dim_B + 1; j++) {
-            // detect max transformation
-            match = last_line[j - 1] + SimilarityScore(sequence_A[i - 1], sequence_B[j - 1]);
-            insertion = current_line[j - 1] - penalty;
-            deletion = last_line[j] - penalty;
+            match = similarity_matrix[i - 1][j - 1] + SimilarityScore(sequence_A[i - 1], sequence_B[j - 1]);
+            insertion = similarity_matrix[i][j - 1] - penalty;
+            deletion = similarity_matrix[i - 1][j] - penalty;
             maximum_value = max({0, match, insertion, deletion});
-            current_line[j] = (short) maximum_value;
+            similarity_matrix[i][j] = (short) maximum_value;
             if (maximum_value != 0) {
-                // indices for traceback
                 if (maximum_value == match) {
-                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i - 1, j - 1)});
+                    traceback[i][j] = 3;
                 } else if (maximum_value == insertion) {
-                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i, j - 1)});
+                    traceback[i][j] = 2;
                 } else if (maximum_value == deletion) {
-                    traceback.insert({pair<int, int>(i, j), pair<int, int>(i - 1, j)});
+                    traceback[i][j] = 1;
                 }
                 if (maximum_value > max_so_far) {
                     max_so_far = maximum_value;
@@ -61,13 +56,13 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
                 }
             }
         }
-        for (int k = 0; k < dim_B + 1; k++) {
-            last_line[k] = current_line[k];
-        }
     }
+
+
     ofstream outfile ("../train-data/ecoli_mutated_test.csv");
     string first;
     string second;
+    /*
     list<tuple<char,int,char>> list_of_mutations;
     tuple<char,int,char> mutation_tuple;
     int sum;
@@ -109,7 +104,7 @@ pair<string, string> SmithWaterman(string sequence_A, string sequence_B, int reg
     reverse(first.begin(), first.end());
     reverse(second.begin(), second.end());
     outfile.close();
-
+    */
     return pair<string, string> (first, second);
 
 }
