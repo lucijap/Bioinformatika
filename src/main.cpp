@@ -36,27 +36,34 @@ int main() {
 
     sort(keys.begin(), keys.end());
 
-    list<tuple<char,int,char>> mutation_list;
-    list<tuple<char,int,char>> current_mutations;
-    set<tuple<char,int,char>> unique_mutations;
+    vector<unsigned int> mutation_list;
+    map<unsigned int, short> counters;
+    pair<int,int> region;
+    map<string, list<int>> seq_kmers;
+    vector<string> hit_list;
 
     // detecting mutations
+    cout << "start" << endl;
     int i = 0;
     for (auto const& it :sequences) {
+        i++;
+        if (i%10==0){
+            cout << 100 * i / sequences.size() << endl;
+        }
         string sequence = it;
 
         // generate k-mers of read sequence
-        map<string, list<int>> seq_kmers = GenerateKmers(&sequence, w, k);
+        seq_kmers = GenerateKmers(&sequence, w, k);
 
         // generates hit_list of k-mers
-        vector<string> hit_list = Blast(&keys, &seq_kmers, k);
+        hit_list = Blast(&keys, &seq_kmers, k);
 
         //cout << "done with hit list" << endl;
 
         seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
 
         // finds mapping regions
-        pair<int,int> region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
+        region = MapHits(&hit_list, &kmers, reference.size(), sequence.size(), k);
         if (region.second==0){
             continue;
         }
@@ -66,34 +73,85 @@ int main() {
         string hit_region = reference.substr(region.first, region.second);
 
         // local alignment with Smith Waterman and writing mutations to csv file
-        current_mutations = SmithWaterman(hit_region, sequence, region.first);
-        for(auto const&mutation:current_mutations){
-            mutation_list.push_back(mutation);
-            unique_mutations.insert(mutation);
+        mutation_list = SmithWaterman(hit_region, sequence, region.first);
+        for(auto const&mutation:mutation_list){
+            counters[mutation] += 1;
         }
 
         //cout << "done with smith" << endl;
-        i++;
-        if (i%10==0){
-            cout<<"--------------------------"<<i<<"---------------------"<<endl;
-        }
+
+
 
     }
+    cout << "end" << endl;
     // open result file
-    ofstream outfile ("../all_mutations.csv");
+    ofstream outfile ("../our_mutated.csv");
     int counter;
-    for(auto const&mutation:unique_mutations){
-        counter = count(mutation_list.begin(),mutation_list.end(),mutation);
-        outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << ","<< counter<< endl;
-        /*if (get<1>(mutation)<4000 || get<1>(mutation)>44000){
-            if(counter>=5){
-                outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << endl;
+    int max_size = (int) reference.size() - 4000;
+
+    vector<unsigned int> cnt_keys;
+    cnt_keys.reserve(counters.size());
+    for(auto const&itt:counters){
+        cnt_keys.push_back(itt.first);
+    }
+
+    unsigned int position;
+    unsigned int letter_hash;
+    unsigned int type_hash;
+    unsigned int first_two;
+    char type = 'N';
+    char letter = 'N';
+    for(auto &mutation:cnt_keys){
+        first_two = mutation/10000000;
+        position = mutation - first_two * 10000000;
+        type_hash = first_two/5;
+        switch(type_hash) {
+            case 0:
+                type = 'X';
+                break;
+            case 1:
+                type = 'D';
+                break;
+            case 2:
+                type = 'I';
+                break;
+            default:
+                break;
+        }
+
+        letter_hash = first_two % 5;
+
+        switch(letter_hash) {
+            case 0:
+                letter = '-';
+                break;
+            case 1:
+                letter = 'A';
+                break;
+            case 2:
+                letter = 'C';
+                break;
+            case 3:
+                letter = 'G';
+                break;
+            case 4:
+                letter = 'T';
+                break;
+            default:
+                break;
+        }
+
+
+        if (position<4000 || position>max_size){
+            if(counters[mutation]>=6){
+                outfile << type << "," << position << "," << letter << endl;
             }
         }else {
-            if (counter >= 8) {
-                outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << endl;
+            if (counters[mutation] >= 10) {
+                outfile << type << "," << position << "," << letter << endl;
             }
-        }*/
+        }
+
     }
     outfile.close();
 }
