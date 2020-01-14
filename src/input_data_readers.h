@@ -7,6 +7,16 @@
 #endif //MUTATIONDETECTION_INPUT_DATA_READERS_H
 
 using namespace std;
-
+/**
+ * Reads data from the file containing the referent genome.
+ * @param path: path to file containing referent genome
+ * @return string containing the referent genome
+ */
 string ReadReferentGenome(string path);
+
+/**
+ * Reads data from the file containing mutated genome reads.
+ * @param path: path to file containing mutated genome reads
+ * @return  string containing the mutated genome
+ */
 list<string> ReadMutatedGenomeSequences(string path);
