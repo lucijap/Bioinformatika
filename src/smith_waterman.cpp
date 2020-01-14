@@ -16,6 +16,7 @@ short SimilarityScore(char a, char b) {
     }
 }
 
+// hashing the mutation to save on memory
 unsigned int hash_func(int type, char letter, int sum) {
     unsigned int hash = type * 50000000 + sum;
     switch (letter){
@@ -41,16 +42,19 @@ unsigned int hash_func(int type, char letter, int sum) {
 vector<unsigned int> SmithWaterman(string sequence_A, string sequence_B, int region_start) {
     const int dim_A = sequence_A.length();
     const int dim_B = sequence_B.length();
+    vector<unsigned int> mutation_list;
+
+    // limiting the number of deletions/insertions to save time and memory
     int band = dim_A/20;
+
     vector<vector<short>> similarity_matrix(dim_A + 1);
     for (int i = 0; i < dim_A + 1; i++) {
-        similarity_matrix[i].resize(dim_B + 1);
+        similarity_matrix[i].resize(min(dim_B + 1, band + i + 1));
     }
-    const short penalty = 6;
-
+    const short penalty = 4;
     vector<vector<short>> traceback(dim_A + 1);
     for (int i = 0; i < dim_A + 1; i++) {
-        traceback[i].resize(dim_B + 1);
+        traceback[i].resize(min(dim_B + 1, band + i + 1));
     }
 
     int match = 0, insertion = 0, deletion = 0, maximum_value = 0;
@@ -84,7 +88,7 @@ vector<unsigned int> SmithWaterman(string sequence_A, string sequence_B, int reg
     }
 
 
-    vector<unsigned int> mutation_list;
+
     int sum;
     char char_of_second;
     pair<int, int> next_pair = {};
@@ -95,27 +99,21 @@ vector<unsigned int> SmithWaterman(string sequence_A, string sequence_B, int reg
         if (traceback[max_pair.first][max_pair.second] == 3) {
             next_pair = {max_pair.first - 1, max_pair.second - 1};
             if (sequence_A[max_pair.first - 1] != sequence_B[max_pair.second - 1]) {
-                //mutation_char = 'X';
                 sum = max_pair.first + region_start-1;
                 char_of_second = sequence_B[max_pair.second - 1];
-                //mutation_tuple = make_tuple(mutation_char, sum, char_of_second);
                 mutation_list.push_back(hash_func(0, char_of_second, sum));
             }
-            // deletion
         } else if (traceback[max_pair.first][max_pair.second] == 1) {
+            // deletion
             next_pair = {max_pair.first - 1, max_pair.second};
-            //mutation_char ='D';
             sum=max_pair.first+region_start-1;
             char_of_second='-';
-            //mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
             mutation_list.push_back(hash_func(1, char_of_second, sum));
-            // insertion
         } else if (traceback[max_pair.first][max_pair.second] == 2) {
+            // insertion
             next_pair = {max_pair.first, max_pair.second - 1};
-            //mutation_char ='I';
             sum=max_pair.first+region_start-1;
             char_of_second=sequence_B[max_pair.second - 1];
-            //mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
             mutation_list.push_back(hash_func(2, char_of_second, sum));
         }
         max_pair = {next_pair.first, next_pair.second};
