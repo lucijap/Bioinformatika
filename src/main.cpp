@@ -8,6 +8,7 @@
 #include "hit_mapper.h"
 #include <algorithm>
 #include <fstream>
+#include <set>
 
 using namespace std;
 
@@ -35,6 +36,10 @@ int main() {
 
     sort(keys.begin(), keys.end());
 
+    list<tuple<char,int,char>> mutation_list;
+    list<tuple<char,int,char>> current_mutations;
+    set<tuple<char,int,char>> unique_mutations;
+
     // detecting mutations
     int i = 0;
     for (auto const& it :sequences) {
@@ -61,7 +66,11 @@ int main() {
         string hit_region = reference.substr(region.first, region.second);
 
         // local alignment with Smith Waterman and writing mutations to csv file
-        SmithWaterman(hit_region, sequence, region.first);
+        current_mutations = SmithWaterman(hit_region, sequence, region.first);
+        for(auto const&mutation:current_mutations){
+            mutation_list.push_back(mutation);
+            unique_mutations.insert(mutation);
+        }
 
         //cout << "done with smith" << endl;
         i++;
@@ -69,9 +78,22 @@ int main() {
             cout<<"--------------------------"<<i<<"---------------------"<<endl;
         }
 
-
     }
-
-
-
+    // open result file
+    ofstream outfile ("../all_mutations.csv");
+    int counter;
+    for(auto const&mutation:unique_mutations){
+        counter = count(mutation_list.begin(),mutation_list.end(),mutation);
+        outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << ","<< counter<< endl;
+        /*if (get<1>(mutation)<4000 || get<1>(mutation)>44000){
+            if(counter>=5){
+                outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << endl;
+            }
+        }else {
+            if (counter >= 8) {
+                outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << endl;
+            }
+        }*/
+    }
+    outfile.close();
 }

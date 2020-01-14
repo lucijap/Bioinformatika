@@ -4,7 +4,6 @@
 #include <map>
 #include <list>
 #include <algorithm>
-#include <fstream>
 #include <vector>
 
 using namespace std;
@@ -60,8 +59,7 @@ list<tuple<char,int,char>> SmithWaterman(string sequence_A, string sequence_B, i
         }
     }
 
-    // open result file
-    ofstream outfile ("../result_mutations.csv", ios_base::app);
+
     string first;
     string second;
     list<tuple<char,int,char>> list_of_mutations;
@@ -78,7 +76,7 @@ list<tuple<char,int,char>> SmithWaterman(string sequence_A, string sequence_B, i
             next_pair = {max_pair.first - 1, max_pair.second - 1};
             if (sequence_A[max_pair.first - 1] != sequence_B[max_pair.second - 1]) {
                 mutation_char = 'X';
-                sum = max_pair.first + region_start;
+                sum = max_pair.first + region_start-1;
                 char_of_second = sequence_B[max_pair.second - 1];
                 mutation_tuple = make_tuple(mutation_char, sum, char_of_second);
                 list_of_mutations.push_back(mutation_tuple);
@@ -87,7 +85,7 @@ list<tuple<char,int,char>> SmithWaterman(string sequence_A, string sequence_B, i
         } else if (traceback[max_pair.first][max_pair.second] == 1) {
             next_pair = {max_pair.first - 1, max_pair.second};
             mutation_char ='D';
-            sum=max_pair.first+region_start;
+            sum=max_pair.first+region_start-1;
             char_of_second='-';
             mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
             list_of_mutations.push_back(mutation_tuple);
@@ -95,7 +93,7 @@ list<tuple<char,int,char>> SmithWaterman(string sequence_A, string sequence_B, i
         } else if (traceback[max_pair.first][max_pair.second] == 2) {
             next_pair = {max_pair.first, max_pair.second - 1};
             mutation_char ='I';
-            sum=max_pair.first+region_start;
+            sum=max_pair.first+region_start-1;
             char_of_second=sequence_B[max_pair.second - 1];
             mutation_tuple = make_tuple(mutation_char,sum, char_of_second);
             list_of_mutations.push_back(mutation_tuple);
@@ -103,12 +101,6 @@ list<tuple<char,int,char>> SmithWaterman(string sequence_A, string sequence_B, i
         max_pair = {next_pair.first, next_pair.second};
     }
 
-    // write mutations to file
-    for(auto const&mutation:list_of_mutations){
-        outfile << get<0>(mutation) << "," << get<1>(mutation) << "," << get<2>(mutation) << endl;
-    }
-
-    outfile.close();
 
     return list_of_mutations;
 }

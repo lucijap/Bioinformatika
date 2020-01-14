@@ -61,7 +61,7 @@ pair<int,int> MapHits(vector<string>* hit_list,map<string,list<int>>* reference_
     //cout << "most hits: " << max_hits << endl;
     //cout << "regions with most hits: " << max_hitters << endl;
 
-    if (max_hits<200){
+    if (max_hits<50){
         region_length=0;
     }
 
