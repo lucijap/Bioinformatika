@@ -1,0 +1,3 @@
+C:/Users/Lucija/Documents/FER/BIOINF/Bioinformatika/src/CMakeFiles/rebuild_cache.dir
+C:/Users/Lucija/Documents/FER/BIOINF/Bioinformatika/src/CMakeFiles/MutationDetection.dir
+C:/Users/Lucija/Documents/FER/BIOINF/Bioinformatika/src/CMakeFiles/edit_cache.dir
