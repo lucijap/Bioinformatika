@@ -58,10 +58,12 @@ pair<int,int> MapHits(vector<string>* hit_list,map<string,list<int>>* reference_
             max_hitters += 1;
         }
     }
-    cout << "most hits: " << max_hits << endl;
-    cout << "regions with most hits: " << max_hitters << endl;
+    //cout << "most hits: " << max_hits << endl;
+    //cout << "regions with most hits: " << max_hitters << endl;
 
-
+    if (max_hits<200){
+        region_length=0;
+    }
 
     return make_pair(max_hits_region,region_length);
 }
