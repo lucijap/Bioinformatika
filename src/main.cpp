@@ -9,23 +9,30 @@
 #include <algorithm>
 #include <fstream>
 #include <set>
+#include <ctime>
 
 using namespace std;
 
-int main() {
 
-    int w = 5;
-    int k = 11;
-    // reading input files
-    string reference = ReadReferentGenome("../train-data/lambda.fasta");
-    list<string> sequences = ReadMutatedGenomeSequences("../train-data/lambda_simulated_reads.fasta");
+int main(int argc, char *argv[]) {
 
-    //cout << "done with read" << endl;
+    //parse arguments
+
+    string reference_path = argv[0];
+    string mutated_path = argv[1];
+    int w = atoi(argv[2]);
+    int k = atoi(argv[3]);
+
+    clock_t begin = clock();
+
+
+    string reference = ReadReferentGenome(reference_path);
+    list<string> sequences = ReadMutatedGenomeSequences(mutated_path);
+
 
     // generating k-mers for reference
     map<string, list<int>> kmers = GenerateKmers(&reference, w, k);
 
-    //cout << "done with gen kmers" << endl;
 
     // get vector of k-mers without index lists
     vector<string> keys;
@@ -58,7 +65,6 @@ int main() {
         // generates hit_list of k-mers
         hit_list = Blast(&keys, &seq_kmers, k);
 
-        //cout << "done with hit list" << endl;
 
         seq_kmers.erase(seq_kmers.begin(), seq_kmers.end());
 
@@ -67,7 +73,6 @@ int main() {
         if (region.second==0){
             continue;
         }
-        //cout << "done with map hit" << endl;
 
         hit_list.clear();
         string hit_region = reference.substr(region.first, region.second);
@@ -78,12 +83,12 @@ int main() {
             counters[mutation] += 1;
         }
 
-        //cout << "done with smith" << endl;
 
 
 
     }
     cout << "end" << endl;
+
     // open result file
     ofstream outfile ("../our_mutated.csv");
     int counter;
@@ -154,4 +159,8 @@ int main() {
 
     }
     outfile.close();
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+    cout << "Time elapsed: "<<elapsed_secs<<" s"<<endl;
 }
