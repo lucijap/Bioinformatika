@@ -7,6 +7,10 @@ using namespace std;
 #ifndef MUTATIONDETECTION_HIT_MAPPER_H
 #define MUTATIONDETECTION_HIT_MAPPER_H
 
+//
+// Created by Lucija Planinić and Marko Meštrović.
+//
+
 /**
  *Counts the number of hits for every region, chooses the region with the most hits
  * @param hit_list: list of shared k-mers in sequence and reference

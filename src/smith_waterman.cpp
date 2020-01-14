@@ -46,7 +46,7 @@ vector<unsigned int> SmithWaterman(string sequence_A, string sequence_B, int reg
     for (int i = 0; i < dim_A + 1; i++) {
         similarity_matrix[i].resize(dim_B + 1);
     }
-    const short penalty = 4;
+    const short penalty = 6;
 
     vector<vector<short>> traceback(dim_A + 1);
     for (int i = 0; i < dim_A + 1; i++) {

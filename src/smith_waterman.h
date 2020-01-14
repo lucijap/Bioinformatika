@@ -5,6 +5,10 @@ using namespace std;
 #ifndef SRC_SMITH_WATERMAN_H
 #define SRC_SMITH_WATERMAN_H
 
+//
+// Created by Ivan Ištuk and Marko Meštrović.
+//
+
 /**
  * Implements the Smith Waterman algorithm, which gives us the best local alignment for the two given sequences.
  *

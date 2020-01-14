@@ -7,6 +7,10 @@
 
 using namespace std;
 
+//
+// Created by Lucija Planinić and Ivan Ištuk.
+//
+
 /**
  * Generates a map of k-mers and their indices for a given sequence.
  * To reduce storage space, k-mers that are stored are minimizers of a certain window.

@@ -143,7 +143,7 @@ int main() {
 
 
         if (position<4000 || position>max_size){
-            if(counters[mutation]>=6){
+            if(counters[mutation]>=4){
                 outfile << type << "," << position << "," << letter << endl;
             }
         }else {
