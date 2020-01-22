@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
 
     //parse arguments
 
-    string reference_path = argv[0];
-    string mutated_path = argv[1];
-    int w = atoi(argv[2]);
-    int k = atoi(argv[3]);
+    string reference_path = argv[1];
+    string mutated_path = argv[2];
+    int w = atoi(argv[3]);
+    int k = atoi(argv[4]);
 
     clock_t begin = clock();
 
@@ -107,9 +107,9 @@ int main(int argc, char *argv[]) {
     char type = 'N';
     char letter = 'N';
     for(auto &mutation:cnt_keys){
-        first_two = mutation/10000000;
-        position = mutation - first_two * 10000000;
-        type_hash = first_two/5;
+        first_two = mutation/100000000;
+        position = mutation - first_two * 100000000;
+        type_hash = first_two/10;
         switch(type_hash) {
             case 0:
                 type = 'X';
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
                 break;
         }
 
-        letter_hash = first_two % 5;
+        letter_hash = first_two % 10;
 
         switch(letter_hash) {
             case 0:
