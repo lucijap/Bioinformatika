@@ -18,19 +18,19 @@ short SimilarityScore(char a, char b) {
 
 // hashing the mutation to save on memory
 unsigned int hash_func(int type, char letter, int sum) {
-    unsigned int hash = type * 50000000 + sum;
+    unsigned int hash = type * 1000000000 + sum;
     switch (letter){
         case 'A':
-            hash += 10000000;
+            hash += 100000000;
             break;
         case 'C':
-            hash += 20000000;
+            hash += 200000000;
             break;
         case 'G':
-            hash += 30000000;
+            hash += 300000000;
             break;
         case 'T':
-            hash += 40000000;
+            hash += 400000000;
             break;
         default:
             break;
